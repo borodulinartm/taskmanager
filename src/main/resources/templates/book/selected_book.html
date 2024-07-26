@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Task planner</title>
+</head>
+<body>
+    <div>
+        <p th:if="${ok == true}" th:text="${message}"></p>
+    </div>
+
+    <div>
+        <p><a th:href="@{/tasks/new}" th:text="'Add task to book'"></a></p>
+    </div>
+
+    <div th:object="${curBook}">
+        <p th:text="'ID of the book - ' + *{bookID}"></p>
+        <p th:text="'name of the book - ' + *{bookName}"></p>
+
+        <div th:each="task : *{listTasks}">
+            <p><a th:text="${task.name}" th:href="@{/tasks/{id}(id=${task.id})}"></a></p>
+        </div>
+    </div>
+</body>
+
+</html>

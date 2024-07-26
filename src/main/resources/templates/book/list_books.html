@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
+</head>
+<body>
+    <div>
+        <!-- <p><a th:href="@{/tasks/new}" th:text="'Create new task'"></a></p> -->
+        <p th:if="${ok == true}" th:text="${message}" class="info"></p>
+        <div th:each="book: ${booksList}">
+            <p>
+                <a th:text="'Name = ' + ${book.bookName}" th:href="@{/books/{id}(id=${book.bookID})}"></a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

@@ -8,6 +8,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
+import java.util.List;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
@@ -25,5 +27,6 @@ public class Book extends BaseCard {
 
     private String bookDescription;
 
-    //private List<Task> listTasks;
+    @OneToMany(mappedBy = "book")
+    private List<Task> listTasks;
 }

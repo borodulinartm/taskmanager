@@ -23,9 +23,10 @@
             <a th:href="@{/books/delete/{id}(id=${curBook.id})}" th:text="Delete"></a>
         </p>
 
-<!--        <div th:each="task : *{listTasks}">-->
-<!--            <p><a th:text="${task.name}" th:href="@{/tasks/{id}(id=${task.id})}"></a></p>-->
-<!--        </div>-->
+        <div>List tasks:</div>
+        <div th:each="task : *{listTasks}">
+            <p><a th:text="${task.name}" th:href="@{/tasks/{id}(id=${task.id})}"></a></p>
+        </div>
     </div>
 </body>
 

@@ -1,17 +1,28 @@
 package org.example.task_manager.models;
 
+import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
 @Data
-public class Task {
-    private static int CURRENT_ID = 1;
-
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@SuperBuilder
+@Entity
+public class Task extends BaseCard {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
+
     @NotEmpty(message = "The name cannot be null")
     private String name;
     
@@ -24,25 +35,9 @@ public class Task {
 
     private PriorityTasks priorityTasks;
 
-    public static Task createNewTask(String name, String descriptionTask, LocalDate date, PriorityTasks tasks) {
-        return new Task(CURRENT_ID++, name, descriptionTask, date, tasks);
-    }
-
-    public static Task createNewTask(int id, String name, String descriptionTask, LocalDate date, PriorityTasks tasks) {
-        return new Task(id, name, descriptionTask, date, tasks);
-    }
-
-    private Task(int id, String name, String descriptionTask, LocalDate date, PriorityTasks tasks) {
-        this.id = id;
-        this.name = name;
-        this.descriptionTask = descriptionTask;
-        this.dateCompleting = date;
-        this.priorityTasks = tasks;
-    }
-
-    public boolean isTaskNew() {
-        return id < 0;
-    }
+    @ManyToOne
+    @JoinColumn(name = "book_id")
+    private Book book;
 
     public enum PriorityTasks {
         LOW, MEDIUM, HIGH

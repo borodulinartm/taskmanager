@@ -3,10 +3,11 @@ package org.example.task_manager.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
-import org.example.task_manager.dao.TasksDAO;
 import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.models.Task.PriorityTasks;
+import org.example.task_manager.service.BookService;
+import org.example.task_manager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,46 +16,34 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.swing.text.html.Option;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
 @Slf4j
 @SessionAttributes("curBook")
 public class TaskController {
-    private final TasksDAO tasksDAO;
-//    private final BookDAO bookDAO;
+    private final BookService bookService;
+    private final TaskService taskService;
 
     @Autowired
-    public TaskController(TasksDAO dao) {
-        tasksDAO = dao;
-//        this.bookDAO = bookDAO;
+    public TaskController(BookService bookService, TaskService taskService) {
+        this.taskService = taskService;
+        this.bookService = bookService;
     }
 
-    // Получение списка задач
-    @GetMapping("/tasks")
-    public String getTasks(Model model) {
-        List<Task> allTasks = tasksDAO.getTasksList();
-        model.addAttribute("tasksList", allTasks);
-
-        return "task/tasks_list";
-    }
-
-    // Получение конкретной задачи по её ID-шнику
     @GetMapping("/tasks/{id}")
     public String getTaskByID(@PathVariable(name = "id") Integer taskID, Model model) {
-        Task taskById = tasksDAO.getTaskById(taskID);
-        model.addAttribute("task", taskById);
+        Optional<Task> curTask = taskService.getTaskById(taskID);
+        model.addAttribute("task", curTask.get());
 
         return "task/selected_task";
     }
 
-    @ModelAttribute(name = "newTask")
-    public Task newTask() {
-        return Task.createNewTask(null, null, null, null);
-    }
-
     @GetMapping("/tasks/new")
-    public String createNewTaskForm() {
+    public String createNewTaskForm(Model model) {
+        model.addAttribute("newTask", Task.builder().build());
         return "task/new_task";
     }
 
@@ -62,11 +51,6 @@ public class TaskController {
     public PriorityTasks[] addPrioritiesToTask() {
         return PriorityTasks.values();
     }
-
-//    @ModelAttribute("curBook")
-//    public Book newCurBook() {
-//        return new Book("Book sample");
-//    }
 
     @PostMapping("/tasks/new")
     public String postNewTask(
@@ -81,13 +65,12 @@ public class TaskController {
         }
 
         if (currentBook != null) {
-            tasksDAO.addNewTask(newTask);
-//            bookDAO.addTask(currentBook.getBookID(), newTask);
-            
-            attributes.addFlashAttribute("ok", true);
-            attributes.addFlashAttribute("message", "A task has created successfully");
+            newTask.setBook(currentBook);
+            taskService.createTask(newTask);
 
-            return "redirect:/books/";
+            attributes.addFlashAttribute("success_text", "A task has added successfully");
+
+            return "redirect:/books/" + currentBook.getId();
         } else {
             return "redirect:/tasks";
         }
@@ -96,12 +79,12 @@ public class TaskController {
     // Редактирование текущей задачи
     @GetMapping("/tasks/{id}/edit")
     public String editTask(@PathVariable(name = "id") Integer taskID, Model model) {
-        Task task = tasksDAO.getTaskById(taskID);
-        if (task.isTaskNew()) {
-            log.error("The task is not exist");
-        } else {
-            model.addAttribute("editedTask", task);
-        }
+//        Task task = tasksDAO.getTaskById(taskID);
+//        if (task.isTaskNew()) {
+//            log.error("The task is not exist");
+//        } else {
+//            model.addAttribute("editedTask", task);
+//        }
 
         return "task/edit_task";
     }
@@ -122,8 +105,8 @@ public class TaskController {
             editedTask.setPriorityTasks(PriorityTasks.LOW);
         }
 
-        tasksDAO.updateTask(id, editedTask.getName(), 
-            editedTask.getDescriptionTask(), editedTask.getDateCompleting(), editedTask.getPriorityTasks());
+//        tasksDAO.updateTask(id, editedTask.getName(),
+//            editedTask.getDescriptionTask(), editedTask.getDateCompleting(), editedTask.getPriorityTasks());
 
         // Формирование ModelAndView
         mView.setViewName("redirect:/tasks/{id}");
@@ -138,10 +121,9 @@ public class TaskController {
     public ModelAndView deleteTask(
             @PathVariable(name = "id") Integer taskID, final RedirectAttributes attributes,
             @ModelAttribute("curBook") Book currentBook) {
-        if (tasksDAO.isTaskExists(taskID)) {
-            tasksDAO.deleteTask(taskID);
-//            bookDAO.deleteTask(currentBook.getBookID(), taskID);
-        }
+//        if (tasksDAO.isTaskExists(taskID)) {
+//            tasksDAO.deleteTask(taskID);
+//        }
 
         // Redirect Attributes для отображения доп.информации
         ModelAndView mov = new ModelAndView();
@@ -150,7 +132,7 @@ public class TaskController {
         attributes.addFlashAttribute("ok", true);
         attributes.addFlashAttribute("message", "The task with ID " + taskID + " has removed");
 
-        mov.setViewName("");
+//        mov.setViewName("");
         return mov;
     }
 }

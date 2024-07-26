@@ -3,7 +3,6 @@ package org.example.task_manager.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
-import org.example.task_manager.dao.BookDAO;
 import org.example.task_manager.dao.TasksDAO;
 import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
@@ -23,12 +22,12 @@ import java.util.List;
 @SessionAttributes("curBook")
 public class TaskController {
     private final TasksDAO tasksDAO;
-    private final BookDAO bookDAO;
+//    private final BookDAO bookDAO;
 
     @Autowired
-    public TaskController(TasksDAO dao, BookDAO bookDAO) {
+    public TaskController(TasksDAO dao) {
         tasksDAO = dao;
-        this.bookDAO = bookDAO;
+//        this.bookDAO = bookDAO;
     }
 
     // Получение списка задач
@@ -64,10 +63,10 @@ public class TaskController {
         return PriorityTasks.values();
     }
 
-    @ModelAttribute("curBook")
-    public Book newCurBook() {
-        return new Book("Book sample");
-    }
+//    @ModelAttribute("curBook")
+//    public Book newCurBook() {
+//        return new Book("Book sample");
+//    }
 
     @PostMapping("/tasks/new")
     public String postNewTask(
@@ -83,12 +82,12 @@ public class TaskController {
 
         if (currentBook != null) {
             tasksDAO.addNewTask(newTask);
-            bookDAO.addTask(currentBook.getBookID(), newTask);
+//            bookDAO.addTask(currentBook.getBookID(), newTask);
             
             attributes.addFlashAttribute("ok", true);
             attributes.addFlashAttribute("message", "A task has created successfully");
 
-            return "redirect:/books/" + currentBook.getBookID();
+            return "redirect:/books/";
         } else {
             return "redirect:/tasks";
         }
@@ -141,17 +140,17 @@ public class TaskController {
             @ModelAttribute("curBook") Book currentBook) {
         if (tasksDAO.isTaskExists(taskID)) {
             tasksDAO.deleteTask(taskID);
-            bookDAO.deleteTask(currentBook.getBookID(), taskID);
+//            bookDAO.deleteTask(currentBook.getBookID(), taskID);
         }
 
         // Redirect Attributes для отображения доп.информации
         ModelAndView mov = new ModelAndView();
-        String redirectUrl = "redirect:/books/" + currentBook.getBookID();
+//        String redirectUrl = "redirect:/books/" + currentBook.getBookID();
 
         attributes.addFlashAttribute("ok", true);
         attributes.addFlashAttribute("message", "The task with ID " + taskID + " has removed");
 
-        mov.setViewName(redirectUrl);
+        mov.setViewName("");
         return mov;
     }
 }

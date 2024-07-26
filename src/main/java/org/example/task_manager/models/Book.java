@@ -1,41 +1,29 @@
 package org.example.task_manager.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 
 @Data
-public class Book {
-    private static int curID = 1;
-
-    private int bookID;
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
+@Entity
+@SuperBuilder
+public class Book extends BaseCard {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Integer id;
 
     @NotEmpty(message = "The name cannot be empty")
+    @Column(nullable = false)
     private String bookName;
 
     private String bookDescription;
 
-    private List<Task> listTasks;
-    
-    {
-        listTasks = new ArrayList<>();
-    }
-
-    public Book(String bookName, String bookDescription) {
-        this.bookID = curID;
-        this.bookName = bookName;
-        this.bookDescription = bookDescription;
-
-        ++curID;
-    }
-
-    public Book(String bookName) {
-        this(bookName, "");
-    }
-
-    public void addTask(Task addTask) {
-        listTasks.add(addTask);
-    }
+    //private List<Task> listTasks;
 }

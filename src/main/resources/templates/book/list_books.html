@@ -7,11 +7,11 @@
 </head>
 <body>
     <div>
-        <!-- <p><a th:href="@{/tasks/new}" th:text="'Create new task'"></a></p> -->
-        <p th:if="${ok == true}" th:text="${message}" class="info"></p>
+        <p><a th:href="@{/books/create}" th:text="'Create new book!!!'"></a></p>
+        <p th:if="${success_text != null}" th:text="${success_text}" class="info"></p>
         <div th:each="book: ${booksList}">
             <p>
-                <a th:text="'Name = ' + ${book.bookName}" th:href="@{/books/{id}(id=${book.bookID})}"></a>
+                <a th:text="'Name = ' + ${book.bookName}" th:href="@{/books/{id}(id=${book.id})}"></a>
             </p>
         </div>
     </div>

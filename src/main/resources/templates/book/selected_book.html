@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <title>Task planner</title>
+    <link rel="stylesheet" th:href="@{/styles.css}">
 </head>
 <body>
     <div>
-        <p th:if="${ok == true}" th:text="${message}"></p>
+        <p th:if="${success_text != null}" th:text="${success_text}" class="info"></p>
     </div>
 
     <div>
@@ -14,12 +15,17 @@
     </div>
 
     <div th:object="${curBook}">
-        <p th:text="'ID of the book - ' + *{bookID}"></p>
+        <p th:text="'ID of the book - ' + *{id}"></p>
         <p th:text="'name of the book - ' + *{bookName}"></p>
 
-        <div th:each="task : *{listTasks}">
-            <p><a th:text="${task.name}" th:href="@{/tasks/{id}(id=${task.id})}"></a></p>
-        </div>
+        <p>
+            <a th:href="@{/books/edit/{id}(id=${curBook.id})}" th:text="Edit"></a>
+            <a th:href="@{/books/delete/{id}(id=${curBook.id})}" th:text="Delete"></a>
+        </p>
+
+<!--        <div th:each="task : *{listTasks}">-->
+<!--            <p><a th:text="${task.name}" th:href="@{/tasks/{id}(id=${task.id})}"></a></p>-->
+<!--        </div>-->
     </div>
 </body>
 

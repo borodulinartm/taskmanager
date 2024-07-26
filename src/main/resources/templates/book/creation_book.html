@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>New Book</title>
+    <link th:href="@{/styles.css}" rel="stylesheet">
+</head>
+<body>
+<form method="post" th:action="@{/books/create}" th:object="${curBook}">
+    <div>
+        <label for="name">Name of the book</label>
+        <input id="name" th:field="*{bookName}">
+        <span th:if="${#fields.hasErrors('bookName')}" th:errors="*{bookName}" class="error">Name is required</span>
+    </div>
+
+    <div>
+        <label for="description">Description of the book</label>
+        <input id="description" th:field="*{bookDescription}">
+        <span th:if="${#fields.hasErrors('bookDescription')}" th:errors="*{bookDescription}" class="error">Description is required</span>
+    </div>
+
+    <div>
+        <input type="submit" value="Create new book"/>
+    </div>
+</form>
+</body>
+</html>

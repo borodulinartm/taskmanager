@@ -16,27 +16,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.Option;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
 @Slf4j
 @SessionAttributes("curBook")
 public class TaskController {
-    private final BookService bookService;
     private final TaskService taskService;
 
     @Autowired
     public TaskController(BookService bookService, TaskService taskService) {
         this.taskService = taskService;
-        this.bookService = bookService;
     }
 
     @GetMapping("/tasks/{id}")
-    public String getTaskByID(@PathVariable(name = "id") Integer taskID, Model model) {
+    public String getTaskByID(@PathVariable(name = "id") Integer taskID, Model model, 
+            @ModelAttribute(name = "curBook") Book curBook) {
         Optional<Task> curTask = taskService.getTaskById(taskID);
         model.addAttribute("task", curTask.get());
+        model.addAttribute("curBook", curBook);
 
         return "task/selected_task";
     }
@@ -79,20 +77,18 @@ public class TaskController {
     // Редактирование текущей задачи
     @GetMapping("/tasks/{id}/edit")
     public String editTask(@PathVariable(name = "id") Integer taskID, Model model) {
-//        Task task = tasksDAO.getTaskById(taskID);
-//        if (task.isTaskNew()) {
-//            log.error("The task is not exist");
-//        } else {
-//            model.addAttribute("editedTask", task);
-//        }
+        Optional<Task> editedTask = taskService.getTaskById(taskID);
+        editedTask.ifPresentOrElse(arg0 -> model.addAttribute("editedTask", arg0),
+            () -> log.error("No task selected", new NoSuchFieldError())
+        );
 
         return "task/edit_task";
     }
 
     @PostMapping("/tasks/{id}/edit")
     public ModelAndView postEditTask(
-            @PathVariable(name = "id") Integer id,
-            @Valid @ModelAttribute(name = "editedTask") Task editedTask, Errors error,
+            @PathVariable(name = "id") Integer id, @Valid @ModelAttribute(name = "editedTask") Task editedTask, Errors error,
+            @ModelAttribute(name = "curBook") Book currentBook,
             RedirectAttributes redirectAttributes) { 
         ModelAndView mView = new ModelAndView();
         if (error.hasErrors()) {
@@ -105,8 +101,8 @@ public class TaskController {
             editedTask.setPriorityTasks(PriorityTasks.LOW);
         }
 
-//        tasksDAO.updateTask(id, editedTask.getName(),
-//            editedTask.getDescriptionTask(), editedTask.getDateCompleting(), editedTask.getPriorityTasks());
+        editedTask.setBook(currentBook);
+        taskService.createTask(editedTask);
 
         // Формирование ModelAndView
         mView.setViewName("redirect:/tasks/{id}");
@@ -121,18 +117,16 @@ public class TaskController {
     public ModelAndView deleteTask(
             @PathVariable(name = "id") Integer taskID, final RedirectAttributes attributes,
             @ModelAttribute("curBook") Book currentBook) {
-//        if (tasksDAO.isTaskExists(taskID)) {
-//            tasksDAO.deleteTask(taskID);
-//        }
+        if (taskID != null) {
+            taskService.deleteTask(taskID);
+        } else {
+            log.info("Cannot delete task because the ID is null");
+        }
 
         // Redirect Attributes для отображения доп.информации
-        ModelAndView mov = new ModelAndView();
-//        String redirectUrl = "redirect:/books/" + currentBook.getBookID();
-
-        attributes.addFlashAttribute("ok", true);
-        attributes.addFlashAttribute("message", "The task with ID " + taskID + " has removed");
-
-//        mov.setViewName("");
+        ModelAndView mov = new ModelAndView("redirect:/books/" + currentBook.getId());
+        attributes.addFlashAttribute("success_text", "The task with ID " + taskID + " has removed");
+        
         return mov;
     }
 }

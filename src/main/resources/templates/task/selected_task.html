@@ -18,6 +18,9 @@
     </div>
 
     <div>
+        <form method="post" th:action="@{/tasks/{id}/complete(id=${task.id})}">
+            <button class="link-button">Complete this task</button>
+        </form>
         <p><a th:href="@{/books/{id}(id=${curBook.id})}" th:text="'Return to book page'"></a></p>
         <p><a th:href="@{/tasks/{id}/edit(id=${task.id})}" th:text="'Edit this task'"></a></p>
         <p><a th:href="@{/tasks/{id}/delete(id=${task.getId()})}" th:text="'Delete the task'"></a></p>

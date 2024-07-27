@@ -6,6 +6,7 @@ import org.example.task_manager.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
 import java.util.Optional;
 
 @Service
@@ -30,5 +31,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public void deleteTask(Integer taskID) {
         taskRepository.deleteById(taskID);
+    }
+
+    @Override
+    public void markCompleted(Task task) {
+        task.setIsCompleted(true);
+        taskRepository.save(task);
     }
 }

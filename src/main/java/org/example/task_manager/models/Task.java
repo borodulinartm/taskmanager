@@ -35,6 +35,8 @@ public class Task extends BaseCard {
 
     private PriorityTasks priorityTasks;
 
+    private Boolean isCompleted;
+
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;

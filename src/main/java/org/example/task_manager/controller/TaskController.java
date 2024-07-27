@@ -33,7 +33,9 @@ public class TaskController {
     public String getTaskByID(@PathVariable(name = "id") Integer taskID, Model model, 
             @ModelAttribute(name = "curBook") Book curBook) {
         Optional<Task> curTask = taskService.getTaskById(taskID);
-        model.addAttribute("task", curTask.get());
+        Task aTask = curTask.orElse(null);
+        
+        model.addAttribute("task", aTask);
         model.addAttribute("curBook", curBook);
 
         return "task/selected_task";
@@ -128,5 +130,18 @@ public class TaskController {
         attributes.addFlashAttribute("success_text", "The task with ID " + taskID + " has removed");
         
         return mov;
+    }
+
+    @PostMapping("/tasks/{id}/complete")
+    public ModelAndView completeTask(@PathVariable Integer id, Model model, @ModelAttribute(name = "task") Task task) {
+        ModelAndView mView = new ModelAndView("task/selected_task");
+
+        Optional<Task> aOptionalTask = taskService.getTaskById(id);
+        Task aTask = aOptionalTask.orElse(null);
+    
+        taskService.markCompleted(aTask);
+        model.addAttribute("task", aTask);
+
+        return mView;
     }
 }

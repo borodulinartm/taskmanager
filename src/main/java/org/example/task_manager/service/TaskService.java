@@ -8,4 +8,5 @@ public interface TaskService {
     void createTask(Task aTask);
     Optional<Task> getTaskById(Integer id);
     void deleteTask(Integer taskID);
+    void markCompleted(Task task);
 }

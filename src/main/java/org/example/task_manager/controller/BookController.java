@@ -1,7 +1,8 @@
 package org.example.task_manager.controller;
 
 import jakarta.validation.Valid;
-import org.example.task_manager.models.Book;
+
+import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@Slf4j
 @SessionAttributes("curBook")
 public class BookController {
     private final BookService bookService;
@@ -45,7 +44,7 @@ public class BookController {
         ModelAndView result = new ModelAndView();
         result.setViewName("book/selected_book");
 
-        Optional<Book> curBook = bookService.getBookById(bookID);
+        Optional<BookDTO> curBook = bookService.getBookById(bookID);
         List<Task> tasksForTheBook = curBook.get().getListTasks();
 
         // Добавляем также тестовую книгу, если вдруг открыли какую-то ерунду
@@ -58,7 +57,7 @@ public class BookController {
 
     @GetMapping("/books/create")
     public ModelAndView showBookForm(Model model) {
-        model.addAttribute("curBook", new Book());
+        model.addAttribute("curBook", new BookDTO());
 
         ModelAndView result = new ModelAndView();
         result.setViewName("book/creation_book");
@@ -68,7 +67,7 @@ public class BookController {
 
     @PostMapping("/books/create")
     public ModelAndView createNewBook(
-            @Valid @ModelAttribute(name = "curBook") Book createdBook,
+            @Valid @ModelAttribute(name = "curBook") BookDTO createdBook,
             Errors errors, RedirectAttributes attributes
     ) {
         ModelAndView res = new ModelAndView();
@@ -81,7 +80,7 @@ public class BookController {
         // Add our book to the database
         bookService.createBook(createdBook);
 
-        res.setViewName("redirect:/books/" + createdBook.getId());
+        res.setViewName("redirect:/books");
         attributes.addFlashAttribute("success_text", "A book has created successfully");
 
         return res;
@@ -93,7 +92,7 @@ public class BookController {
             @PathVariable(name = "id") Integer bookID, Model model
     ) {
         ModelAndView res = new ModelAndView();
-        Optional<Book> curBook = bookService.getBookById(bookID);
+        Optional<BookDTO> curBook = bookService.getBookById(bookID);
 
         curBook.ifPresent(book -> model.addAttribute("curBook", book));
 
@@ -104,7 +103,7 @@ public class BookController {
     @PostMapping("/books/edit/{id}")
     public ModelAndView postEditBook(
             @PathVariable(name = "id") Integer bookID,
-            @Valid @ModelAttribute(name = "curBook") Book curBook, Errors errors, RedirectAttributes attrs
+            @Valid @ModelAttribute(name = "curBook") BookDTO curBook, Errors errors, RedirectAttributes attrs
     ) {
         ModelAndView mView = new ModelAndView();
 

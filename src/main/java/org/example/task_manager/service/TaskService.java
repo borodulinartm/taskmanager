@@ -1,12 +1,13 @@
 package org.example.task_manager.service;
 
-import org.example.task_manager.models.Task;
+import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.dto.TaskDTO;
 
 import java.util.Optional;
 
 public interface TaskService {
-    void createTask(Task aTask);
-    Optional<Task> getTaskById(Integer id);
+    void createTask(TaskDTO aTask, BookDTO aBook);
+    Optional<TaskDTO> getTaskById(Integer id);
     void deleteTask(Integer taskID);
-    void markCompleted(Task task);
+    void markCompleted(TaskDTO task);
 }

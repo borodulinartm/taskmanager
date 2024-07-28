@@ -3,11 +3,13 @@ package org.example.task_manager.controller;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
-import org.example.task_manager.models.Book;
+import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.dto.TaskDTO;
+import org.example.task_manager.etc.PriorityTasks;
 import org.example.task_manager.models.Task;
-import org.example.task_manager.models.Task.PriorityTasks;
 import org.example.task_manager.service.BookService;
 import org.example.task_manager.service.TaskService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -31,9 +33,9 @@ public class TaskController {
 
     @GetMapping("/tasks/{id}")
     public String getTaskByID(@PathVariable(name = "id") Integer taskID, Model model, 
-            @ModelAttribute(name = "curBook") Book curBook) {
-        Optional<Task> curTask = taskService.getTaskById(taskID);
-        Task aTask = curTask.orElse(null);
+            @ModelAttribute(name = "curBook") BookDTO curBook) {
+        Optional<TaskDTO> curTask = taskService.getTaskById(taskID);
+        TaskDTO aTask = curTask.orElse(null);
         
         model.addAttribute("task", aTask);
         model.addAttribute("curBook", curBook);
@@ -54,8 +56,8 @@ public class TaskController {
 
     @PostMapping("/tasks/new")
     public String postNewTask(
-            @Valid @ModelAttribute(name = "newTask") Task newTask, Errors errors, RedirectAttributes attributes,
-            @ModelAttribute(name = "curBook") Book currentBook) {
+            @Valid @ModelAttribute(name = "newTask") TaskDTO newTask, Errors errors, RedirectAttributes attributes,
+            @ModelAttribute(name = "curBook") BookDTO currentBook) {
         if (errors.hasErrors()) {
             return "task/new_task";
         }
@@ -65,8 +67,7 @@ public class TaskController {
         }
 
         if (currentBook != null) {
-            newTask.setBook(currentBook);
-            taskService.createTask(newTask);
+            taskService.createTask(newTask, currentBook);
 
             attributes.addFlashAttribute("success_text", "A task has added successfully");
 
@@ -79,7 +80,7 @@ public class TaskController {
     // Редактирование текущей задачи
     @GetMapping("/tasks/{id}/edit")
     public String editTask(@PathVariable(name = "id") Integer taskID, Model model) {
-        Optional<Task> editedTask = taskService.getTaskById(taskID);
+        Optional<TaskDTO> editedTask = taskService.getTaskById(taskID);
         editedTask.ifPresentOrElse(arg0 -> model.addAttribute("editedTask", arg0),
             () -> log.error("No task selected", new NoSuchFieldError())
         );
@@ -89,8 +90,8 @@ public class TaskController {
 
     @PostMapping("/tasks/{id}/edit")
     public ModelAndView postEditTask(
-            @PathVariable(name = "id") Integer id, @Valid @ModelAttribute(name = "editedTask") Task editedTask, Errors error,
-            @ModelAttribute(name = "curBook") Book currentBook,
+            @PathVariable(name = "id") Integer id, @Valid @ModelAttribute(name = "editedTask") TaskDTO editedTask, Errors error,
+            @ModelAttribute(name = "curBook") BookDTO currentBook,
             RedirectAttributes redirectAttributes) { 
         ModelAndView mView = new ModelAndView();
         if (error.hasErrors()) {
@@ -103,8 +104,7 @@ public class TaskController {
             editedTask.setPriorityTasks(PriorityTasks.LOW);
         }
 
-        editedTask.setBook(currentBook);
-        taskService.createTask(editedTask);
+        taskService.createTask(editedTask, currentBook);
 
         // Формирование ModelAndView
         mView.setViewName("redirect:/tasks/{id}");
@@ -118,7 +118,7 @@ public class TaskController {
     @GetMapping("/tasks/{id}/delete")
     public ModelAndView deleteTask(
             @PathVariable(name = "id") Integer taskID, final RedirectAttributes attributes,
-            @ModelAttribute("curBook") Book currentBook) {
+            @ModelAttribute("curBook") BookDTO currentBook) {
         if (taskID != null) {
             taskService.deleteTask(taskID);
         } else {
@@ -133,15 +133,20 @@ public class TaskController {
     }
 
     @PostMapping("/tasks/{id}/complete")
-    public ModelAndView completeTask(@PathVariable Integer id, Model model, @ModelAttribute(name = "task") Task task) {
+    public ModelAndView completeTask(@PathVariable Integer id, Model model, @ModelAttribute(name = "task") TaskDTO task,
+            RedirectAttributes attributes) {
         ModelAndView mView = new ModelAndView("task/selected_task");
 
-        Optional<Task> aOptionalTask = taskService.getTaskById(id);
-        Task aTask = aOptionalTask.orElse(null);
-    
-        taskService.markCompleted(aTask);
-        model.addAttribute("task", aTask);
+        Optional<TaskDTO> aOptionalTask = taskService.getTaskById(id);
+        TaskDTO aTask = aOptionalTask.orElse(null);
 
+        if (aTask != null) {
+            taskService.markCompleted(aTask);
+        } else {
+            log.info("No aTask provided");
+        }
+
+        model.addAttribute("task", aTask);
         return mView;
     }
 }

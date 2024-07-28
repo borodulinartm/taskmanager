@@ -1,10 +1,13 @@
 package org.example.task_manager.service.impl;
 
+import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.dto.TaskDTO;
+import org.example.task_manager.mapping.BookMapper;
+import org.example.task_manager.mapping.TaskMapper;
 import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.repositry.BookRepository;
 import org.example.task_manager.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,20 +16,29 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
+    private final TaskMapper taskMapper;
 
-    @Autowired
-    public BookServiceImpl(BookRepository rep) {
-        bookRepository = rep;
+    // @Autowired
+    public BookServiceImpl(BookMapper bookMapper, BookRepository rep, TaskMapper mapper) {
+        this.taskMapper = mapper;
+        this.bookMapper = bookMapper;
+        this.bookRepository = rep;
     }
 
     @Override
-    public Iterable<Book> allBooks() {
-        return bookRepository.findAll();
+    public List<BookDTO> allBooks() {
+        return bookMapper.booksToBookDTOs(bookRepository.findAll());
     }
 
     @Override
-    public Optional<Book> getBookById(Integer id) {
-        return bookRepository.findById(id);
+    public Optional<BookDTO> getBookById(Integer id) {
+        Optional<Book> curBook = bookRepository.findById(id);
+        if (curBook.isPresent()) {
+            return Optional.of(bookMapper.bookToBookDTO(curBook.get()));
+        }
+        
+        return Optional.ofNullable(null);
     }
 
     @Override
@@ -35,16 +47,17 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void addTask(Integer bookID, Task aTask) {
+    public void addTask(Integer bookID, TaskDTO aTask) {
         Optional<Book> curBook = bookRepository.findById(bookID);
         curBook.ifPresent(book -> {
             List<Task> allTasks = book.getListTasks();
-            allTasks.add(aTask);
+            allTasks.add(taskMapper.taskDTOToTask(aTask));
         });
     }
 
     @Override
-    public void createBook(Book newBook) {
-        bookRepository.save(newBook);
+    public void createBook(BookDTO newBook) {
+        Book aBook = bookMapper.bookDTOToBook(newBook);
+        bookRepository.save(aBook);
     }
 }

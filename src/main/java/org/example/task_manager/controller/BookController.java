@@ -3,7 +3,6 @@ package org.example.task_manager.controller;
 import jakarta.validation.Valid;
 
 import org.example.task_manager.dto.BookDTO;
-import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +13,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Optional;
 
 @Controller
-@Slf4j
 @SessionAttributes("curBook")
 public class BookController {
     private final BookService bookService;

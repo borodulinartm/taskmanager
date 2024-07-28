@@ -1,12 +1,13 @@
 package org.example.task_manager.service.impl;
 
 import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.dto.TaskDTO;
 import org.example.task_manager.mapping.BookMapper;
+import org.example.task_manager.mapping.TaskMapper;
 import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.repositry.BookRepository;
 import org.example.task_manager.service.BookService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +17,11 @@ import java.util.Optional;
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
     private final BookMapper bookMapper;
+    private final TaskMapper taskMapper;
 
-    @Autowired
-    public BookServiceImpl(BookMapper bookMapper, BookRepository rep) {
+    // @Autowired
+    public BookServiceImpl(BookMapper bookMapper, BookRepository rep, TaskMapper mapper) {
+        this.taskMapper = mapper;
         this.bookMapper = bookMapper;
         this.bookRepository = rep;
     }
@@ -44,11 +47,11 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void addTask(Integer bookID, Task aTask) {
+    public void addTask(Integer bookID, TaskDTO aTask) {
         Optional<Book> curBook = bookRepository.findById(bookID);
         curBook.ifPresent(book -> {
             List<Task> allTasks = book.getListTasks();
-            allTasks.add(aTask);
+            allTasks.add(taskMapper.taskDTOToTask(aTask));
         });
     }
 

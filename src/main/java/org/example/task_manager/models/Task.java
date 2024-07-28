@@ -12,6 +12,8 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
+import org.example.task_manager.etc.PriorityTasks;
+
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor
@@ -35,13 +37,9 @@ public class Task extends BaseCard {
 
     private PriorityTasks priorityTasks;
 
-    private Boolean isCompleted;
+    private boolean isCompleted;
 
     @ManyToOne
     @JoinColumn(name = "book_id")
     private Book book;
-
-    public enum PriorityTasks {
-        LOW, MEDIUM, HIGH
-    }
 }

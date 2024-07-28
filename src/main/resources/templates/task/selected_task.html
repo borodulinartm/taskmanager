@@ -7,7 +7,7 @@
 </head>
 <body>
     <div>
-        <p th:if="${ok == true}" th:text="${message}"></p>
+        <p th:if="${ok == true}" th:text="${message}" class="info"></p>
     </div>
     <div th:object="${task}">
         <p th:text="'ID of the task - ' + *{id}"></p>

@@ -1,6 +1,6 @@
 package org.example.task_manager;
 
-import org.example.task_manager.models.Book;
+import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.service.BookService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -20,11 +20,10 @@ public class TaskManagerApplication {
 	public CommandLineRunner runner(BookService service) {
 		return args -> {
 			for (int i = 0; i < 10; ++i) {
-				Book myBook = Book.builder()
+				BookDTO myBook = BookDTO.builder()
 						.bookName("My book #" + i)
 						.bookDescription("Description of the book #" + i)
 						.creationDate(LocalDateTime.now())
-						.createdUser("Artem")
 						.build();
 
 				service.createBook(myBook);

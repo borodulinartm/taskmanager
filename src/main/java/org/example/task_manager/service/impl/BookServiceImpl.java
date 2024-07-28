@@ -1,5 +1,7 @@
 package org.example.task_manager.service.impl;
 
+import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.mapping.BookMapper;
 import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.repositry.BookRepository;
@@ -13,20 +15,27 @@ import java.util.Optional;
 @Service
 public class BookServiceImpl implements BookService {
     private final BookRepository bookRepository;
+    private final BookMapper bookMapper;
 
     @Autowired
-    public BookServiceImpl(BookRepository rep) {
-        bookRepository = rep;
+    public BookServiceImpl(BookMapper bookMapper, BookRepository rep) {
+        this.bookMapper = bookMapper;
+        this.bookRepository = rep;
     }
 
     @Override
-    public Iterable<Book> allBooks() {
-        return bookRepository.findAll();
+    public List<BookDTO> allBooks() {
+        return bookMapper.booksToBookDTOs(bookRepository.findAll());
     }
 
     @Override
-    public Optional<Book> getBookById(Integer id) {
-        return bookRepository.findById(id);
+    public Optional<BookDTO> getBookById(Integer id) {
+        Optional<Book> curBook = bookRepository.findById(id);
+        if (curBook.isPresent()) {
+            return Optional.of(bookMapper.bookToBookDTO(curBook.get()));
+        }
+        
+        return Optional.ofNullable(null);
     }
 
     @Override
@@ -44,7 +53,8 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
-    public void createBook(Book newBook) {
-        bookRepository.save(newBook);
+    public void createBook(BookDTO newBook) {
+        Book aBook = bookMapper.bookDTOToBook(newBook);
+        bookRepository.save(aBook);
     }
 }

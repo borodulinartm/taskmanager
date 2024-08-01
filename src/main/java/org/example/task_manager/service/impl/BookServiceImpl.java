@@ -8,6 +8,7 @@ import org.example.task_manager.models.Book;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.repositry.BookRepository;
 import org.example.task_manager.service.BookService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public class BookServiceImpl implements BookService {
     private final BookMapper bookMapper;
     private final TaskMapper taskMapper;
 
-    // @Autowired
+    @Autowired
     public BookServiceImpl(BookMapper bookMapper, BookRepository rep, TaskMapper mapper) {
         this.taskMapper = mapper;
         this.bookMapper = bookMapper;

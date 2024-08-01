@@ -1,11 +1,10 @@
 package org.example.task_manager.mapping;
 
+import org.example.task_manager.dto.BookDTO;
+import org.example.task_manager.models.Book;
 import org.mapstruct.Mapper;
 
 import java.util.List;
-
-import org.example.task_manager.dto.*;
-import org.example.task_manager.models.*;
 
 @Mapper(componentModel = "spring")
 public interface BookMapper {

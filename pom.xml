@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>1.18.34</version>
         </dependency>
 
         <dependency>
@@ -96,7 +96,11 @@
             <version>1.6.0.RC1</version>
         </dependency>
 
-
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>1.6.0.RC1</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -123,9 +127,13 @@
                         <path>
                             <groupId>org.mapstruct</groupId>
                             <artifactId>mapstruct-processor</artifactId>
-                            <version>1.6.0.Beta1</version>
+                            <version>1.6.0.RC1</version>
                         </path>
                     </annotationProcessorPaths>
+
+<!--                    <annotationProcessors>-->
+<!--                        <annotationProcessor>lombok.launch.AnnotationProcessorHider$AnnotationProcessor</annotationProcessor>-->
+<!--                    </annotationProcessors>-->
                 </configuration>
             </plugin>
         </plugins>

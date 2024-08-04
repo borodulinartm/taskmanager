@@ -7,6 +7,10 @@
 </head>
 <body>
     <div>
+        <form method="post" th:action="@{/logout}">
+            <input type="submit" value="logout">
+        </form>
+
         <p><a th:href="@{/books/create}" th:text="'Create new book!!!'"></a></p>
         <p th:if="${success_text != null}" th:text="${success_text}" class="info"></p>
         <div th:each="book: ${booksList}">

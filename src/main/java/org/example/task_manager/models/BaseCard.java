@@ -23,22 +23,4 @@ public class BaseCard {
 
     @Column(insertable = false)
     private LocalDateTime updatedTime;
-
-    @Column(updatable = false)
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "personName", column = @Column(name = "createdUser_name")),
-        @AttributeOverride(name = "personSurname", column = @Column(name = "createdUser_surname")),
-        @AttributeOverride(name = "personEmail", column =  @Column(name = "createdUser_email"))
-    })
-    private Person createdUser;
-
-    @Column(insertable = false)
-    @Embedded
-    @AttributeOverrides({
-        @AttributeOverride(name = "personName", column = @Column(name = "updatedUser_name")),
-        @AttributeOverride(name = "personSurname", column = @Column(name = "updatedUser_surname")),
-        @AttributeOverride(name = "personEmail", column =  @Column(name = "updatedUser_email"))
-    })
-    private Person updatedUser;
 }

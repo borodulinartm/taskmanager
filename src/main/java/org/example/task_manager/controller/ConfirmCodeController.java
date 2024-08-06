@@ -5,8 +5,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.task_manager.models.User;
+import org.example.task_manager.security.TwoFactorUsernamePasswordToken;
 import org.example.task_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,6 +53,13 @@ public class ConfirmCodeController {
 
         SecurityContext context = SecurityContextHolder.getContext();
         Authentication auth = context.getAuthentication();
+
+        // Check for validity code
+        Authentication fullAuth = new UsernamePasswordAuthenticationToken(
+                auth.getPrincipal(), auth.getCredentials(), auth.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(fullAuth);
+
         successHandler.onAuthenticationSuccess(request, response, auth);
     }
 }

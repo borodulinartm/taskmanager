@@ -16,6 +16,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -28,6 +29,11 @@ public class SecurityConfig {
     @Bean
     public UserDetailsService userDetailsService() {
         return new CustomUserDetailsService();
+    }
+
+    @Bean
+    public HttpSessionSecurityContextRepository httpSessionSecurityContextRepository() {
+        return new HttpSessionSecurityContextRepository();
     }
 
     @Bean
@@ -44,7 +50,9 @@ public class SecurityConfig {
                         .successHandler(new CustomAuthenticationSuccessHandler("/2fa", getSuccessHandler())));
         httpSecurity.logout(logout ->
                 logout.logoutUrl("/logout").logoutSuccessUrl("/home"));
-        ///httpSecurity.securityContext(securityConext -> securityConext.requireExplicitSave(false));
+
+        // it saves data in session automatically
+        httpSecurity.securityContext(securityConext -> securityConext.requireExplicitSave(false));
 
         return httpSecurity.build();
     }

@@ -3,11 +3,13 @@ package org.example.task_manager.security;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import org.example.task_manager.models.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 import java.io.IOException;
 
@@ -31,7 +33,12 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         User currentUser = (User) authentication.getPrincipal();
         if (!currentUser.isConfirmCodeEnabled()) {
             // We are still not authenticated
-            SecurityContextHolder.getContext().setAuthentication(new TwoFactorUsernamePasswordToken(authentication));
+            TwoFactorUsernamePasswordToken token = new TwoFactorUsernamePasswordToken(authentication);
+            SecurityContextHolder.getContext().setAuthentication(token);
+
+            HttpSession session = request.getSession(true);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,
+                    SecurityContextHolder.getContext());
             secondary.onAuthenticationSuccess(request, response, authentication);
         } else {
             primary.onAuthenticationSuccess(request, response, authentication);

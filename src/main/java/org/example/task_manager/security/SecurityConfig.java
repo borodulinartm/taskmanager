@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .successHandler(new CustomAuthenticationSuccessHandler("/2fa", getSuccessHandler())));
         httpSecurity.logout(logout ->
                 logout.logoutUrl("/logout").logoutSuccessUrl("/home"));
-        httpSecurity.securityContext(securityConext -> securityConext.requireExplicitSave(false));
+        ///httpSecurity.securityContext(securityConext -> securityConext.requireExplicitSave(false));
 
         return httpSecurity.build();
     }

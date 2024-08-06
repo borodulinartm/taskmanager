@@ -5,9 +5,11 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.example.task_manager.models.User;
-import org.example.task_manager.security.TwoFactorUsernamePasswordToken;
 import org.example.task_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -42,11 +44,13 @@ public class ConfirmCodeController {
 
     @PostMapping("/2fa")
     public void checkConfirmCode(@ModelAttribute(name = "user") User code,
-                                 TwoFactorUsernamePasswordToken authentication,
                                  HttpServletRequest request,
                                  HttpServletResponse response) throws IOException, ServletException {
         String confirmCode = code.getCode();
         log.debug(confirmCode);
-        successHandler.onAuthenticationSuccess(request, response, authentication);
+
+        SecurityContext context = SecurityContextHolder.getContext();
+        Authentication auth = context.getAuthentication();
+        successHandler.onAuthenticationSuccess(request, response, auth);
     }
 }

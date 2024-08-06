@@ -12,12 +12,6 @@
     Unable to login. Check your username and password.
 </div>
 
-<!--<div th:if="${param.otp}">-->
-<!--    <p class="text-danger">-->
-<!--        Я сгенерировал код. Попробуй угадать его-->
-<!--    </p>-->
-<!--</div>-->
-
 <p>New here? Click <a th:href="@{/register}">here</a> to register.</p>
 
 <form method="POST" th:action="@{/login}" id="loginForm">

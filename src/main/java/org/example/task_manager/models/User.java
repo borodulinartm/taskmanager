@@ -27,6 +27,7 @@ public class User implements UserDetails {
     private String password;
     private String passwordConfirmation;
     private String code; // for 2FA
+    private boolean confirmCodeEnabled;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

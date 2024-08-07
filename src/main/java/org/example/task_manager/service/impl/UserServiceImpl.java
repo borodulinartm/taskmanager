@@ -13,9 +13,11 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @Slf4j
@@ -55,9 +57,30 @@ public class UserServiceImpl implements UserService {
 
             // Authenticate the user after registration
             HttpSession session = request.getSession();
-            session.setAttribute("SPRING_SECURITY_CONTEXT", context);
+            session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
         } catch (UsernameNotFoundException exception) {
             log.debug("User not found");
         }
+    }
+
+    @Override
+    public void generateConfirmationCode(User user) {
+        Random random = new Random();
+
+        user.setCode(String.valueOf(random.nextInt(1000, 9999)));
+        user.setConfirmCodeEnabled(false);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public boolean verifyConfirmationCode(User user, String confirmationCode) {
+        return user.getCode().equals(confirmationCode);
+    }
+
+    @Override
+    public void acceptUser(User user) {
+        user.setConfirmCodeEnabled(true);
+        userRepository.save(user);
     }
 }

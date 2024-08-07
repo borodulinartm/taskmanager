@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.example.task_manager.models.User;
 import org.example.task_manager.repositry.UserRepository;
+import org.example.task_manager.security.TwoFactorUsernamePasswordToken;
 import org.example.task_manager.service.UserService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,11 +53,12 @@ public class UserServiceImpl implements UserService {
             );
 
             // Get the current context
+            Authentication tokenWithConfirmCode = new TwoFactorUsernamePasswordToken(authentication);
             SecurityContext context = SecurityContextHolder.getContext();
-            context.setAuthentication(authentication);
+            context.setAuthentication(tokenWithConfirmCode);
 
             // Authenticate the user after registration
-            HttpSession session = request.getSession();
+            HttpSession session = request.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
         } catch (UsernameNotFoundException exception) {
             log.debug("User not found");
@@ -81,6 +83,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void acceptUser(User user) {
         user.setConfirmCodeEnabled(true);
+        userRepository.save(user);
+    }
+
+    @Override
+    public void resetEnablementFlag(User user) {
+        user.setConfirmCodeEnabled(false);
         userRepository.save(user);
     }
 }

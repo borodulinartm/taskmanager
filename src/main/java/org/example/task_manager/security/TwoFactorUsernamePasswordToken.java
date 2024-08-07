@@ -1,6 +1,7 @@
 package org.example.task_manager.security;
 
 import org.springframework.security.authentication.AbstractAuthenticationToken;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
@@ -16,6 +17,10 @@ public class TwoFactorUsernamePasswordToken extends AbstractAuthenticationToken 
 
         this.primary = primary;
         setAuthenticated(true);
+    }
+
+    public TwoFactorUsernamePasswordToken(String username, String password) {
+        this(new UsernamePasswordAuthenticationToken(username, password));
     }
 
     @Override

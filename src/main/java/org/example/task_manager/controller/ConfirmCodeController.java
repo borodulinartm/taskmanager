@@ -4,17 +4,13 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.example.task_manager.exceptions.ConfirmationCodeNotMatchedException;
 import org.example.task_manager.models.User;
-import org.example.task_manager.security.TwoFactorUsernamePasswordToken;
 import org.example.task_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 
@@ -30,15 +27,12 @@ import java.io.IOException;
 public class ConfirmCodeController {
     private final UserService userService;
     private final AuthenticationSuccessHandler successHandler;
-    private final AuthenticationFailureHandler failureHandler;
 
     @Autowired
     public ConfirmCodeController(UserService userService,
-                                 AuthenticationSuccessHandler successHandler,
-                                 AuthenticationFailureHandler failureHandler) {
+                                 AuthenticationSuccessHandler successHandler) {
         this.userService = userService;
         this.successHandler = successHandler;
-        this.failureHandler = failureHandler;
     }
 
     @GetMapping("/2fa")
@@ -51,9 +45,10 @@ public class ConfirmCodeController {
     }
 
     @PostMapping("/2fa")
-    public void checkConfirmCode(@ModelAttribute(name = "user") User code,
-                                 HttpServletRequest request,
-                                 HttpServletResponse response) throws IOException, ServletException {
+    public ModelAndView checkConfirmCode(@ModelAttribute(name = "user") User code,
+                                         HttpServletRequest request,
+                                         HttpServletResponse response,
+                                         RedirectAttributes attributes) throws IOException, ServletException {
         String confirmCode = code.getCode();
 
         SecurityContext context = SecurityContextHolder.getContext();
@@ -70,9 +65,10 @@ public class ConfirmCodeController {
             SecurityContextHolder.getContext().setAuthentication(fullAuth);
 
             successHandler.onAuthenticationSuccess(request, response, auth);
+            return null;
         } else {
-            failureHandler.onAuthenticationFailure(request, response,
-                    new ConfirmationCodeNotMatchedException("Confirmation code not matched"));
+            attributes.addFlashAttribute("textError", "Incorrect confirmation code!!!");
+            return new ModelAndView("redirect:/2fa");
         }
     }
 }

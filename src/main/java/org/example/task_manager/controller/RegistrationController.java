@@ -45,9 +45,8 @@ public class RegistrationController {
         userDetailsService.createUser(user, encoder);
 
         String username = user.getUsername();
-
         userDetailsService.authenticateUser(username, password, req);
 
-        return new ModelAndView("redirect:/books");
+        return new ModelAndView("redirect:/2fa");
     }
 }

@@ -13,4 +13,5 @@ public interface UserService {
     void generateConfirmationCode(User user);
     boolean verifyConfirmationCode(User user, String confirmationCode);
     void acceptUser(User user);
+    void resetEnablementFlag(User user);
 }

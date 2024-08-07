@@ -40,7 +40,9 @@ public class SecurityConfig {
     public SecurityFilterChain configFilters(HttpSecurity httpSecurity) throws Exception {
         // Authorization for the user role and
         httpSecurity.authorizeHttpRequests(registry -> {
-            registry.requestMatchers("/books", "/tasks").hasRole("USER");
+            //registry.requestMatchers("/books", "/tasks").hasRole("USER");
+            // Check if the confirmation code has approved
+            registry.requestMatchers("/books", "/tasks").access(new PostAuthorizationManager());
             registry.requestMatchers("/2fa").access(new TwoFactorAuthorizationManager());
             registry.requestMatchers("/**").permitAll();
         });

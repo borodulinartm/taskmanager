@@ -17,6 +17,13 @@
         </div>
 
         <div>
+            <label for="email">Email</label>
+            <input id="email" th:field="*{email}"/>
+            <p class="error" th:each="error: ${#fields.errors('email')}"
+               th:text="${error}">Email error</p>
+        </div>
+
+        <div>
             <label for="password">Password</label>
             <input id="password" type="password" th:field="*{password}"/>
             <p class="error" th:each="error : ${#fields.errors('password')}"

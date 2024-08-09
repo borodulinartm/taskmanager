@@ -1,7 +1,8 @@
-package org.example.task_manager.validation;
+package org.example.task_manager.validation.annotation;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
+import org.example.task_manager.validation.impl.PasswordMatchingValidator;
 
 import java.lang.annotation.*;
 

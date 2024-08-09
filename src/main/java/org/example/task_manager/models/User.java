@@ -1,11 +1,12 @@
 package org.example.task_manager.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.task_manager.validation.PasswordMatching;
+import org.example.task_manager.validation.annotation.PasswordMatching;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,6 +26,8 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    @NotEmpty(message = "The mail cannot be empty")
+    private String email;
     private String username;
     private String password;
     private String passwordConfirmation;

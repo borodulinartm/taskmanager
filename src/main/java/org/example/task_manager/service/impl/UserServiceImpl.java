@@ -36,8 +36,11 @@ public class UserServiceImpl implements UserService {
         Optional<User> isUserExists = userRepository.findByUsername(user.getUsername());
         if (isUserExists.isEmpty()) {
             // Hashing passwords
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setPasswordConfirmation(passwordEncoder.encode(user.getPasswordConfirmation()));
+            // BCrypt uses salt so the same passwords can give different results
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+
+            user.setPassword(hashedPassword);
+            user.setPasswordConfirmation(hashedPassword);
 
             userRepository.save(user);
         } else {

@@ -1,8 +1,9 @@
-package org.example.task_manager.validation;
+package org.example.task_manager.validation.impl;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.example.task_manager.models.User;
+import org.example.task_manager.validation.annotation.PasswordMatching;
 
 public class PasswordMatchingValidator implements ConstraintValidator<PasswordMatching, User> {
     @Override

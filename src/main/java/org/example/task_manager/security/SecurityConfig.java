@@ -1,6 +1,8 @@
 package org.example.task_manager.security;
 
+import org.example.task_manager.service.UserService;
 import org.example.task_manager.service.impl.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +20,13 @@ import org.springframework.security.web.context.HttpSessionSecurityContextReposi
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private final UserService userService;
+
+    @Autowired
+    public SecurityConfig(UserService userService) {
+        this.userService = userService;
+    }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -47,7 +56,8 @@ public class SecurityConfig {
         httpSecurity.addFilterBefore(new LoginPageFilter(), UsernamePasswordAuthenticationFilter.class);
         httpSecurity.formLogin(login ->
                 login.loginPage("/login")
-                        .successHandler(new CustomAuthenticationSuccessHandler("/2fa", getSuccessHandler())));
+                        .successHandler(new CustomAuthenticationSuccessHandler("/2fa",
+                                getSuccessHandler(), userService)));
         httpSecurity.logout(logout ->
                 logout.logoutUrl("/logout").logoutSuccessUrl("/home"));
 

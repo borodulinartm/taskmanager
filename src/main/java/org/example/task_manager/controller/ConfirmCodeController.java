@@ -37,9 +37,6 @@ public class ConfirmCodeController {
 
     @GetMapping("/2fa")
     public ModelAndView show2fa(Model model) {
-        userService.generateConfirmationCode(
-                (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-
         model.addAttribute("user", new User());
         return new ModelAndView("auth/confirmCode");
     }

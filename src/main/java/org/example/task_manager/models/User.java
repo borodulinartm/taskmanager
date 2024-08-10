@@ -1,6 +1,7 @@
 package org.example.task_manager.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,6 +31,7 @@ public class User implements UserDetails {
     private Long id;
 
     @NotEmpty(message = "The mail cannot be empty")
+    @Email(message = "Email is not valid")
     private String email;
     private String username;
     private String password;

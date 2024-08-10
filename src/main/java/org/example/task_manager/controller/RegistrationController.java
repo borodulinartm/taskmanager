@@ -4,6 +4,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.example.task_manager.models.User;
+import org.example.task_manager.service.AuthService;
 import org.example.task_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,11 +19,13 @@ import org.springframework.web.servlet.ModelAndView;
 @Controller
 public class RegistrationController {
     private final UserService userDetailsService;
+    private final AuthService authService;
     private final PasswordEncoder encoder;
 
     @Autowired
-    public RegistrationController(UserService service, PasswordEncoder encoder) {
+    public RegistrationController(UserService service, AuthService authService, PasswordEncoder encoder) {
         this.userDetailsService = service;
+        this.authService = authService;
         this.encoder = encoder;
     }
 
@@ -45,9 +48,10 @@ public class RegistrationController {
         userDetailsService.createUser(user, encoder);
 
         String username = user.getUsername();
+        authService.authenticate(username, password, req);
 
-        userDetailsService.authenticateUser(username, password, req);
+        userDetailsService.generateConfirmationCode(user);
 
-        return new ModelAndView("redirect:/books");
+        return new ModelAndView("redirect:/2fa");
     }
 }

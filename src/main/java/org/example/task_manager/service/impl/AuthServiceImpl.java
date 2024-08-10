@@ -40,6 +40,7 @@ public class AuthServiceImpl implements AuthService {
             // Authenticate the user after registration
             HttpSession session = request.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY, context);
+
         } catch (UsernameNotFoundException exception) {
             log.debug("User not found");
         }

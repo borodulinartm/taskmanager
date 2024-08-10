@@ -3,11 +3,16 @@ package org.example.task_manager.service.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.example.task_manager.models.User;
 import org.example.task_manager.repositry.UserRepository;
+import org.example.task_manager.service.EmailService;
 import org.example.task_manager.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;
@@ -17,10 +22,12 @@ import java.util.Random;
 @Slf4j
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final EmailService emailReceiver;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, EmailService emailService) {
         this.userRepository = userRepository;
+        this.emailReceiver = emailService;
     }
 
     @Override
@@ -44,10 +51,26 @@ public class UserServiceImpl implements UserService {
     public void generateConfirmationCode(User user) {
         Random random = new Random();
 
-        user.setCode(String.valueOf(random.nextInt(1000, 9999)));
+        String generatedCode = String.valueOf(random.nextInt(1000, 9999));
+        user.setCode(generatedCode);
         user.setConfirmCodeEnabled(false);
 
         userRepository.save(user);
+        sendEmail(user, generatedCode);
+    }
+
+    private void sendEmail(User user, String code) {
+        // send a message to the user's email
+        try {
+            File file = ResourceUtils.getFile("classpath:email/email_text.txt");
+            String content = Files.readString(file.toPath()) + " " + user.getCode();
+            String receiver = user.getEmail();
+            String subject = "Activate your account!!!";
+
+            emailReceiver.sendEmail(receiver, subject, content);
+        } catch (IOException exception) {
+            log.warn("Cannot send message to the email: {}", exception.getMessage());
+        }
     }
 
     @Override

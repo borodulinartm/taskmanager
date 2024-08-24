@@ -2,16 +2,15 @@ package org.example.task_manager.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.proxy.HibernateProxy;
 
 import java.util.List;
+import java.util.Objects;
 
-@Data
-@EqualsAndHashCode(callSuper = true)
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -28,5 +27,34 @@ public class Book extends BaseCard {
     private String bookDescription;
 
     @OneToMany(mappedBy = "book")
+    @ToString.Exclude
     private List<Task> listTasks;
+
+    @Override
+    public final boolean equals(Object otherObject) {
+        // Basic comparisons
+        if (otherObject == null) return false;
+        if (this == otherObject) return true;
+
+        // Get the real class of our objects. It may be a proxy
+        Class<?> oEffectiveClass = otherObject instanceof HibernateProxy ?
+                ((HibernateProxy) otherObject).getHibernateLazyInitializer().getImplementationClass() :
+                otherObject.getClass();
+
+        Class<?> oCurrClass = this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getImplementationClass() :
+                this.getClass();
+
+        if (oEffectiveClass != oCurrClass) return false;
+
+        Book otherBook = (Book) otherObject;
+        return getId() != null && Objects.equals(getId(), otherBook.getId());
+    }
+
+    @Override
+    public final int hashCode() {
+        return this instanceof HibernateProxy ?
+                ((HibernateProxy) this).getHibernateLazyInitializer().getImplementationClass().hashCode() :
+                this.getClass().hashCode();
+    }
 }

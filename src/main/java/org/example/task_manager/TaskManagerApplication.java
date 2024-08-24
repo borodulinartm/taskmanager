@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 import java.time.LocalDateTime;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "org.example.task_manager")
 public class TaskManagerApplication {
 
 	public static void main(String[] args) {

@@ -19,5 +19,4 @@ public class BookDTO extends BaseDTO {
     private Integer id;
     private String bookName;
     private String bookDescription;
-    private List<Task> listTasks;
 }

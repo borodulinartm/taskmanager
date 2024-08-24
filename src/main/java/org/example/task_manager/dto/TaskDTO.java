@@ -1,15 +1,14 @@
 package org.example.task_manager.dto;
 
-import java.time.LocalDate;
-
-import org.example.task_manager.etc.PriorityTasks;
-import org.example.task_manager.models.Book;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.example.task_manager.etc.PriorityTasks;
+import org.example.task_manager.models.Book;
+
+import java.time.LocalDate;
 
 @Data
 @EqualsAndHashCode(callSuper = true)

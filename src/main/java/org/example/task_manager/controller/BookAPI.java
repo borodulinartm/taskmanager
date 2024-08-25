@@ -1,5 +1,6 @@
 package org.example.task_manager.controller;
 
+import jakarta.validation.Valid;
 import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.dto.TaskDTO;
 import org.example.task_manager.exceptions.BookNotFoundException;
@@ -9,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +36,12 @@ public class BookAPI {
         return ResponseEntity.notFound().build();
     }
 
+    @GetMapping("/{id}/tasks")
+    public ResponseEntity<List<TaskDTO>> getTasksForBook(@PathVariable Integer id) {
+        List<TaskDTO> allTasksForBook = bookService.getTasksByBookID(id);
+        return ResponseEntity.ok(allTasksForBook);
+    }
+
     // Get book by ID
     @GetMapping("/{id}")
     public ResponseEntity<BookDTO> getBookByID(@PathVariable(name = "id") Integer bookID) {
@@ -44,7 +52,7 @@ public class BookAPI {
     // Creating books
     @PostMapping(consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDTO createBook(@RequestBody BookDTO bookDTO) {
+    public BookDTO createBook(@RequestBody @Valid BookDTO bookDTO) {
         bookService.createBook(bookDTO);
         return bookDTO;
     }
@@ -52,7 +60,7 @@ public class BookAPI {
     // Adding task to my book
     @PostMapping(path ="/{id}/add_task", consumes = "application/json")
     @ResponseStatus(HttpStatus.CREATED)
-    public BookDTO addTaskToBook(@PathVariable(name = "id") Integer id, @RequestBody TaskDTO taskDTO) {
+    public BookDTO addTaskToBook(@PathVariable(name = "id") Integer id, @RequestBody @Valid TaskDTO taskDTO) {
         bookService.addTask(id, taskDTO);
 
         return bookService.getBookById(id).orElseThrow(
@@ -64,8 +72,7 @@ public class BookAPI {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<BookDTO> patchBook(
             @PathVariable(name = "id") Integer bookID,
-            @RequestBody BookDTO bookDTO) {
-
+            @Valid @RequestBody BookDTO bookDTO) {
         BookDTO updatedBook = bookService.updateBook(bookID, bookDTO);
         return ResponseEntity.ok(updatedBook);
     }

@@ -11,8 +11,6 @@ import org.example.task_manager.repositry.BookRepository;
 import org.example.task_manager.repositry.TaskRepository;
 import org.example.task_manager.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,7 +26,8 @@ public class BookServiceImpl implements BookService {
     private final TaskMapper taskMapper;
 
     @Autowired
-    public BookServiceImpl(BookMapper bookMapper, BookRepository rep, TaskMapper mapper, TaskRepository taskRepository) {
+    public BookServiceImpl(BookMapper bookMapper, BookRepository rep, TaskMapper mapper,
+                           TaskRepository taskRepository) {
         this.taskMapper = mapper;
         this.bookMapper = bookMapper;
 
@@ -39,6 +38,17 @@ public class BookServiceImpl implements BookService {
     @Override
     public List<BookDTO> allBooks() {
         return bookMapper.booksToBookDTOs(bookRepository.findAll());
+    }
+
+    @Override
+    public List<TaskDTO> getTasksByBookID(Integer bookID) {
+        Optional<Book> book = bookRepository.findById(bookID);
+        if (book.isPresent()) {
+            List<Task> allTasksForBook = book.get().getListTasks();
+            return taskMapper.tasksToTaskDTOs(allTasksForBook);
+        }
+
+        throw new BookNotFoundException("Book with ID " + bookID + " not found");
     }
 
     @Override

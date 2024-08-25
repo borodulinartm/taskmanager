@@ -1,6 +1,7 @@
 package org.example.task_manager.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -20,7 +21,7 @@ public class Book extends BaseCard {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @NotEmpty(message = "The name cannot be empty")
+    @NotBlank(message = "The name cannot be blank")
     @Column(nullable = false)
     private String bookName;
 

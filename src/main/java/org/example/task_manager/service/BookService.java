@@ -8,6 +8,7 @@ import java.util.Optional;
 
 public interface BookService {
     List<BookDTO> allBooks();
+    List<TaskDTO> getTasksByBookID(Integer bookID);
     void createBook(BookDTO newBook);
     Optional<BookDTO> getBookById(Integer id);
     BookDTO updateBook(Integer bookID, BookDTO updatingBook);

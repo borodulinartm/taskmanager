@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.task_manager.etc.PriorityTasks;
-import org.example.task_manager.models.Book;
 
 import java.time.LocalDate;
 
@@ -21,6 +20,6 @@ public class TaskDTO extends BaseDTO {
     private String descriptionTask;
     private LocalDate dateCompleting;
     private PriorityTasks priorityTasks;
-    private boolean isCompleted;
-    private Book book;
+    private boolean completed;
+    private BookDTO book;
 }

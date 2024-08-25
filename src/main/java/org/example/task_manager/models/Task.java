@@ -1,5 +1,6 @@
 package org.example.task_manager.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotEmpty;
@@ -37,7 +38,8 @@ public class Task extends BaseCard {
     @Enumerated(EnumType.STRING)
     private PriorityTasks priorityTasks;
 
-    private boolean isCompleted;
+    @JsonProperty("isCompleted")
+    private boolean completed;
 
     @ManyToOne
     @JoinColumn(name = "book_id")

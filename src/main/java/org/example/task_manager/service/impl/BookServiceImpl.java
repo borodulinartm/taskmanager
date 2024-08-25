@@ -2,6 +2,7 @@ package org.example.task_manager.service.impl;
 
 import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.dto.TaskDTO;
+import org.example.task_manager.exceptions.BookNotFoundException;
 import org.example.task_manager.mapping.BookMapper;
 import org.example.task_manager.mapping.TaskMapper;
 import org.example.task_manager.models.Book;
@@ -10,6 +11,8 @@ import org.example.task_manager.repositry.BookRepository;
 import org.example.task_manager.repositry.TaskRepository;
 import org.example.task_manager.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -45,7 +48,27 @@ public class BookServiceImpl implements BookService {
             return Optional.of(bookMapper.bookToBookDTO(curBook.get()));
         }
         
-        return Optional.ofNullable(null);
+        throw new BookNotFoundException("Book with id " + id + " not found");
+    }
+
+    @Override
+    public BookDTO updateBook(Integer bookID, BookDTO updatingBook) {
+        Optional<Book> curOptionalBook = bookRepository.findById(bookID);
+        if (curOptionalBook.isPresent()) {
+            Book curBook = curOptionalBook.get();
+            if (updatingBook.getBookDescription() != null) {
+                curBook.setBookDescription(updatingBook.getBookDescription());
+            }
+
+            if (updatingBook.getBookName() != null) {
+                curBook.setBookName(updatingBook.getBookName());
+            }
+
+            bookRepository.save(curBook);
+            return bookMapper.bookToBookDTO(curBook);
+        }
+
+        throw new BookNotFoundException("Book with id " + bookID + " not found");
     }
 
     @Override
@@ -57,7 +80,7 @@ public class BookServiceImpl implements BookService {
     public void addTask(Integer bookID, TaskDTO aTask) {
         Optional<Book> curBook = bookRepository.findById(bookID);
         curBook.ifPresent(book -> {
-            aTask.setBook(book);
+            aTask.setBook(bookMapper.bookToBookDTO(book));
             aTask.setCreationDate(LocalDateTime.now());
 
             Task curTask = taskMapper.taskDTOToTask(aTask);

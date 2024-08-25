@@ -2,6 +2,7 @@ package org.example.task_manager.controller;
 
 import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.dto.TaskDTO;
+import org.example.task_manager.exceptions.BookNotFoundException;
 import org.example.task_manager.service.BookService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,32 +55,25 @@ public class BookAPI {
     public BookDTO addTaskToBook(@PathVariable(name = "id") Integer id, @RequestBody TaskDTO taskDTO) {
         bookService.addTask(id, taskDTO);
 
-        return bookService.getBookById(id).get();
+        return bookService.getBookById(id).orElseThrow(
+                () -> new BookNotFoundException("Book with id " + id + " not found")
+        );
     }
 
+    // Update partition book
     @PatchMapping(path = "/{id}")
     public ResponseEntity<BookDTO> patchBook(
             @PathVariable(name = "id") Integer bookID,
             @RequestBody BookDTO bookDTO) {
-        BookDTO curBook = bookService.getBookById(bookID).orElse(null);
-        if (curBook == null) {
-            return ResponseEntity.notFound().build();
-        }
 
-        if (bookDTO == null) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-        }
+        BookDTO updatedBook = bookService.updateBook(bookID, bookDTO);
+        return ResponseEntity.ok(updatedBook);
+    }
 
-        if (bookDTO.getBookDescription() != null) {
-            curBook.setBookDescription(bookDTO.getBookDescription());
-        }
-
-        if (bookDTO.getBookName() != null) {
-            curBook.setBookName(bookDTO.getBookName());
-        }
-
-        bookService.createBook(curBook);
-
-        return new ResponseEntity<>(curBook, HttpStatus.OK);
+    // Delete book
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteBook(@PathVariable(name = "id") Integer bookID) {
+        bookService.deleteBook(bookID);
     }
 }

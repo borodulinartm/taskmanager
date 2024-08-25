@@ -2,7 +2,7 @@ package org.example.task_manager.service.impl;
 
 import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.dto.TaskDTO;
-import org.example.task_manager.mapping.BookMapper;
+import org.example.task_manager.exceptions.TaskNotFoundException;
 import org.example.task_manager.mapping.TaskMapper;
 import org.example.task_manager.models.Task;
 import org.example.task_manager.repositry.TaskRepository;
@@ -14,19 +14,16 @@ import java.util.Optional;
 @Service
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository taskRepository;
-    private final BookMapper bookMapper;
     private final TaskMapper taskMapper;
 
     // @Autowired
-    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper, BookMapper bookMapper) {
-        this.bookMapper = bookMapper;
+    public TaskServiceImpl(TaskRepository repository, TaskMapper mapper) {
         taskMapper = mapper;
         taskRepository = repository;
     }
 
     @Override
     public void createTask(TaskDTO aTask, BookDTO aBook) {
-        aTask.setBook(bookMapper.bookDTOToBook(aBook));
         taskRepository.save(taskMapper.taskDTOToTask(aTask));
     }
 
@@ -38,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
             return Optional.of(aTaskDTO);
         }
 
-        return Optional.ofNullable(null);
+        throw new TaskNotFoundException("Task with id " + id + " not found");
     }
 
     @Override
@@ -47,8 +44,45 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void markCompleted(TaskDTO task) {
-        task.setCompleted(true);
-        taskRepository.save(taskMapper.taskDTOToTask(task));
+    public TaskDTO markCompleted(Integer taskID) {
+        Optional<Task> aOptionalTask = taskRepository.findById(taskID);
+        if (aOptionalTask.isPresent()) {
+            Task aTask = aOptionalTask.get();
+
+            aTask.setCompleted(true);
+            taskRepository.save(aTask);
+
+            return taskMapper.taskToTaskDTO(aTask);
+        }
+
+        throw new TaskNotFoundException("Task with id = " + taskID + " not found");
+    }
+
+    @Override
+    public TaskDTO updateTask(Integer taskID, TaskDTO newTask) {
+        Optional<Task> curOptionalTask = taskRepository.findById(taskID);
+        if (curOptionalTask.isPresent()) {
+            Task currentTask = curOptionalTask.get();
+
+            Task updatedTask = taskMapper.taskDTOToTask(newTask);
+            if (updatedTask.getName() != null) {
+                currentTask.setName(updatedTask.getName());
+            }
+            if (updatedTask.getDescriptionTask() != null) {
+                currentTask.setDescriptionTask(updatedTask.getDescriptionTask());
+            }
+            if (updatedTask.getPriorityTasks() != null) {
+                currentTask.setPriorityTasks(updatedTask.getPriorityTasks());
+            }
+            if (updatedTask.getDateCompleting() != null) {
+                currentTask.setDateCompleting(updatedTask.getDateCompleting());
+            }
+
+            taskRepository.save(currentTask);
+
+            return taskMapper.taskToTaskDTO(currentTask);
+        }
+
+        throw new TaskNotFoundException("Task with id = " + taskID + " not found");
     }
 }

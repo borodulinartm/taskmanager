@@ -10,6 +10,7 @@ public interface BookService {
     List<BookDTO> allBooks();
     void createBook(BookDTO newBook);
     Optional<BookDTO> getBookById(Integer id);
+    BookDTO updateBook(Integer bookID, BookDTO updatingBook);
     void deleteBook(Integer id);
     void addTask(Integer bookID, TaskDTO aTask);
 }

@@ -9,5 +9,6 @@ public interface TaskService {
     void createTask(TaskDTO aTask, BookDTO aBook);
     Optional<TaskDTO> getTaskById(Integer id);
     void deleteTask(Integer taskID);
-    void markCompleted(TaskDTO task);
+    TaskDTO markCompleted(Integer task);
+    TaskDTO updateTask(Integer taskID, TaskDTO newTask);
 }

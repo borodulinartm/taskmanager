@@ -5,6 +5,7 @@ import java.util.List;
 import org.example.task_manager.dto.TaskDTO;
 import org.example.task_manager.models.Task;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface TaskMapper {

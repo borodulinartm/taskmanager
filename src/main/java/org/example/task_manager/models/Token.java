@@ -21,8 +21,6 @@ public class Token {
     @NotBlank(message = "Token cannot be null")
     private String token;
 
-    private boolean expired;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

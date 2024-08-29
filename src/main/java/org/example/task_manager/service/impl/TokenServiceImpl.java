@@ -7,6 +7,8 @@ import org.example.task_manager.repositry.TokenRepository;
 import org.example.task_manager.service.TokenService;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
@@ -14,13 +16,20 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void saveToken(String token, User user) {
-        Token myToken = Token
-                .builder()
-                .token(token)
-                .user(user)
-                .expired(false)
-                .build();
+        Optional<Token> isToken = tokenRepository.findByUser(user);
+        Token myToken;
+        if (isToken.isPresent()) {
+            myToken = isToken.get();
 
+            myToken.setToken(token);
+            myToken.setUser(user);
+        } else {
+            myToken = Token
+                    .builder()
+                    .token(token)
+                    .user(user)
+                    .build();
+        }
         tokenRepository.save(myToken);
     }
 }

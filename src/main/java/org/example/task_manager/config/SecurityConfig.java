@@ -16,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -24,6 +25,8 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
     // Inject our user details service
     private final UserDetailsImpl userDetails;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     private final String[] WHITE_LIST_URL = {
             "/api/v1/auth/**"
     };
@@ -40,6 +43,7 @@ public class SecurityConfig {
 
         httpSecurity.authenticationProvider(getProvider());
         httpSecurity.logout(logout -> logout.logoutUrl("/api/v1/auth/logout"));
+        httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();
     }

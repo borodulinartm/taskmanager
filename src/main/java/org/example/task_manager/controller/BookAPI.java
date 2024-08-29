@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(path = "/api/books", produces = {
+@RequestMapping(path = "/api/v1/books", produces = {
         "application/json", "text/xml"
 })
 public class BookAPI {

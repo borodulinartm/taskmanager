@@ -4,7 +4,7 @@ import org.example.task_manager.models.AuthenticationRequest;
 import org.example.task_manager.models.AuthenticationResponse;
 import org.example.task_manager.models.Registration;
 
-public interface UserService {
+public interface AuthenticationService {
     AuthenticationResponse registerUser(Registration registrationData);
     AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest);
 }

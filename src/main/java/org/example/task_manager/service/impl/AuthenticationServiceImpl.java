@@ -58,6 +58,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
         SecurityContextHolder.getContext().setAuthentication(auth);
 
         User myUser = ((MyUserDetails) auth.getPrincipal()).getUser();
+        resetAllUserTokens(myUser);
+
         String token = jwtTokenService.generateToken(myUser);
         tokenService.saveToken(token, myUser);
 

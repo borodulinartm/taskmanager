@@ -9,7 +9,6 @@ import org.example.task_manager.service.TokenService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +34,6 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public List<Token> getNonExpiredTokensByUser(User user) {
-        return tokenRepository.findAllByUserAndExpiredFalse(user);
+        return tokenRepository.findAllByUserAndIsExpiredFalse(user);
     }
 }

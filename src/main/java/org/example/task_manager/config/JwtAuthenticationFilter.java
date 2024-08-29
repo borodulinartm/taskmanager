@@ -36,7 +36,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (!request.getRequestURI().contains("/api/v1/auth")) {
             if (myParam.startsWith("Bearer ")) {
                 final String strToken = myParam.substring(7);
-                Optional<Token> token = tokenRepository.findByToken(strToken);
+                Optional<Token> token = tokenRepository.findByTokenAndIsExpiredFalse(strToken);
 
                 // Check via database
                 if (token.isPresent()) {

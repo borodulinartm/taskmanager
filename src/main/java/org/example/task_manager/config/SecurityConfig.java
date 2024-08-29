@@ -2,6 +2,8 @@ package org.example.task_manager.config;
 
 import lombok.RequiredArgsConstructor;
 import org.example.task_manager.service.impl.UserDetailsImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -23,12 +25,15 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     // Inject our user details service
     private final UserDetailsImpl userDetails;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final MyLogoutHandler logoutHandler;
 
     private final String[] WHITE_LIST_URL = {
-            "/api/v1/auth/**"
+            "/api/v1/auth/**",
+            "/api/v1/home"
     };
 
     @Bean
@@ -42,7 +47,11 @@ public class SecurityConfig {
         });
 
         httpSecurity.authenticationProvider(getProvider());
-        httpSecurity.logout(logout -> logout.logoutUrl("/api/v1/auth/logout"));
+        httpSecurity.logout(logout -> {
+            logout.logoutUrl("/api/v1/auth/logout");
+            logout.logoutSuccessUrl("/api/v1/home");
+            logout.addLogoutHandler(logoutHandler);
+        });
         httpSecurity.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return httpSecurity.build();

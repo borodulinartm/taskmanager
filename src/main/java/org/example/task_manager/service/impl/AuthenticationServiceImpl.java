@@ -14,6 +14,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
@@ -68,5 +70,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private boolean isUserExists(String email) {
         return userRepository.findByEmail(email).isPresent();
+    }
+
+    private void resetAllUserTokens(User user) {
+        List<Token> allTokens = tokenService.getNonExpiredTokensByUser(user);
+        allTokens.forEach(token -> {
+            token.setExpired(true);
+        });
+
+        tokenService.saveAll(allTokens);
     }
 }

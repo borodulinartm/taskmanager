@@ -1,5 +1,6 @@
 package org.example.task_manager.service.impl;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.example.task_manager.models.Token;
 import org.example.task_manager.models.User;
@@ -7,6 +8,7 @@ import org.example.task_manager.repositry.TokenRepository;
 import org.example.task_manager.service.TokenService;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,20 +18,23 @@ public class TokenServiceImpl implements TokenService {
 
     @Override
     public void saveToken(String token, User user) {
-        Optional<Token> isToken = tokenRepository.findByUser(user);
-        Token myToken;
-        if (isToken.isPresent()) {
-            myToken = isToken.get();
-
-            myToken.setToken(token);
-            myToken.setUser(user);
-        } else {
-            myToken = Token
-                    .builder()
-                    .token(token)
-                    .user(user)
-                    .build();
-        }
+        Token myToken = Token
+                .builder()
+                .token(token)
+                .user(user)
+                .isExpired(false)
+                .build();
         tokenRepository.save(myToken);
+    }
+
+    @Override
+    @Transactional
+    public void saveAll(List<Token> tokens) {
+        tokenRepository.saveAll(tokens);
+    }
+
+    @Override
+    public List<Token> getNonExpiredTokensByUser(User user) {
+        return tokenRepository.findAllByUserAndExpiredFalse(user);
     }
 }

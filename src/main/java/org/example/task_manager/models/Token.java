@@ -25,6 +25,8 @@ public class Token {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private boolean isExpired;
+
     @Override
     public final boolean equals(Object otherObject) {
         if (this == otherObject) return true;

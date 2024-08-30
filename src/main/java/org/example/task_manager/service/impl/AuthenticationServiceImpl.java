@@ -32,7 +32,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
                     .email(registrationData.getEmail())
                     .nickname(registrationData.getNickname())
                     .password(encoder.encode(registrationData.getPassword()))
-                    .role(Role.USER)
+                    .role(Role.ADMIN)
                     .build();
             myUser = userRepository.save(myUser);
 

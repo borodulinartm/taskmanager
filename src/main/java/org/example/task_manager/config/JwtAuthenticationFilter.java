@@ -33,7 +33,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String myParam = request.getHeader("Authorization");
-        if (!request.getRequestURI().contains("/api/v1/auth")) {
+        if (!request.getRequestURI().contains("/api/v1/auth") && myParam != null) {
             if (myParam.startsWith("Bearer ")) {
                 final String strToken = myParam.substring(7);
                 Optional<Token> token = tokenRepository.findByTokenAndIsExpiredFalse(strToken);

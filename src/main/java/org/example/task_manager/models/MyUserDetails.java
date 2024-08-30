@@ -3,24 +3,18 @@ package org.example.task_manager.models;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 public class MyUserDetails implements UserDetails {
     private final User user;
 
-    public User getUser() {
-        return user;
-    }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(user.getRole().name()));
+        return user.getRole().getAuthorities();
     }
 
     @Override

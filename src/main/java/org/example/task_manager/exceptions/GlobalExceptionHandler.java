@@ -1,5 +1,6 @@
 package org.example.task_manager.exceptions;
 
+import lombok.NonNull;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -7,9 +8,9 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -18,27 +19,30 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler({
             BookNotFoundException.class,
             TaskNotFoundException.class,
-            UsernameNotFoundException.class
+            UsernameNotFoundException.class,
     })
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> handleException(Exception exception) {
+    public Map<String, Object> handleException(BaseException exception) {
         Map<String, Object> details = new HashMap<>();
+
         details.put("message", exception.getMessage());
         details.put("timestamp", LocalDateTime.now());
+        details.put("exception_code",  exception.getExceptionCode());
+
 
         return details;
     }
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
-                                                                  HttpHeaders headers,
+                                                                  @NonNull HttpHeaders headers,
                                                                   HttpStatusCode status,
-                                                                  WebRequest request) {
+                                                                  @NonNull WebRequest request) {
         Map<String, Object> details = new HashMap<>();
 
         details.put("timestamp", LocalDateTime.now());

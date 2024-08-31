@@ -1,6 +1,7 @@
 package org.example.task_manager.service.impl;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -22,17 +23,19 @@ public class JWTTokenServiceImpl implements JWTTokenService {
     private String key;
 
     @Value("${application.security.jwt.expiration_time}")
-    private Long expirationTime;
+    private Long expirationTimeAccessToken;
+
+    @Value("${application.security.jwt.refresh_token.expiration_time}")
+    private Long expirationTimeRefreshToken;
 
     @Override
-    public String generateToken(User user) {
-        return Jwts
-                .builder()
-                .setSubject(user.getEmail())
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
-                .signWith(getKey())
-                .compact();
+    public String generateAccessToken(User user) {
+        return generateKey(user, expirationTimeAccessToken);
+    }
+
+    @Override
+    public String generateRefreshToken(User user) {
+        return generateKey(user, expirationTimeRefreshToken);
     }
 
     @Override
@@ -47,12 +50,24 @@ public class JWTTokenServiceImpl implements JWTTokenService {
         return getUser(token);
     }
 
+    // Common method for generating key
+    private String generateKey(User user, Long expirationTime) {
+        return Jwts
+                .builder()
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
+                .signWith(getKey())
+                .compact();
+    }
+
     private SecretKey getKey() {
         byte[] keyByres = Decoders.BASE64.decode(key);
         return Keys.hmacShaKeyFor(keyByres);
     }
 
     private Claims getClaims(String token) {
+        // When we parse our token, we can encounter with the expiration date exception
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getKey())

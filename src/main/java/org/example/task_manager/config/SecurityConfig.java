@@ -1,14 +1,11 @@
 package org.example.task_manager.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.task_manager.models.Permission;
-import org.example.task_manager.models.Role;
 import org.example.task_manager.service.impl.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -23,13 +20,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import static org.example.task_manager.models.Permission.*;
-
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
     // Inject our user details service
     private final UserDetailsImpl userDetails;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -46,15 +42,8 @@ public class SecurityConfig {
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
 
         httpSecurity.authorizeHttpRequests(requests -> {
-            requests.requestMatchers(WHITE_LIST_URL).permitAll();
-
-            requests.requestMatchers("/api/v1/books/**").hasAnyRole(Role.USER.name());
-            requests.requestMatchers(HttpMethod.GET, "api/v1/books/**").hasAnyAuthority(USER_READ.getPermissionName());
-
-            requests.requestMatchers("/api/v1/admin/**").hasAnyRole(Role.ADMIN.name());
-            requests.requestMatchers(HttpMethod.GET, "/api/v1/admin/**").hasAnyAuthority(ADMIN_READ.getPermissionName());
-
-            requests.anyRequest().authenticated();
+            requests.requestMatchers(WHITE_LIST_URL).permitAll()
+                    .anyRequest().authenticated();
         });
 
         httpSecurity.authenticationProvider(getProvider());

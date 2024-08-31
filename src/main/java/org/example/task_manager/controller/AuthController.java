@@ -1,5 +1,7 @@
 package org.example.task_manager.controller;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.example.task_manager.models.AuthenticationRequest;
 import org.example.task_manager.models.AuthenticationResponse;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
 
 @RestController
 @RequiredArgsConstructor
@@ -25,5 +29,13 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest userData) {
         return ResponseEntity.ok(authenticationService.authenticate(userData));
+    }
+
+    @PostMapping("/refresh")
+    public void refreshToken(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ) throws IOException {
+        authenticationService.updateRefreshToken(request, response);
     }
 }

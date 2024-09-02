@@ -17,6 +17,7 @@ import java.util.Optional;
 @RequestMapping(path = "/api/books", produces = {
         "application/json", "text/xml"
 })
+@CrossOrigin(origins = "http://localhost:8081")
 public class BookAPI {
     private final BookService bookService;
 

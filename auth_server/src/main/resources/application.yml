@@ -1,0 +1,14 @@
+spring:
+    application:
+      name: auth_server
+    datasource:
+        username: artem
+        password: 12345
+        url: jdbc:postgresql://localhost:5432/task_management
+    jpa:
+        hibernate:
+            ddl-auto: update
+    main:
+        banner-mode: off
+server:
+    port: 9000

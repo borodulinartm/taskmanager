@@ -12,3 +12,9 @@ spring:
         banner-mode: off
 server:
     port: 9000
+
+management:
+    endpoints:
+        web:
+            exposure:
+                include: '*'

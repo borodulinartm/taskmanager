@@ -1,6 +1,7 @@
 spring:
     application:
-      name: auth_server
+      name:
+          
     datasource:
         username: artem
         password: 12345

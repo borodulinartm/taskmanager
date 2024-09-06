@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: task_manager
+  main:
+    banner-mode: off
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task_management
+    username: artem
+    password: 12345
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    database: postgresql
+    show-sql: true
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/taskmanager
+          jwk-set-uri: ${spring.security.oauth2.resourceserver.jwt.issuer-uri}/protocol/openid-connect/certs
+server:
+  port: 8081
+
+jwt:
+  client_id: task_manager
+  username: preferred_username

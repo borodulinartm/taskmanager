@@ -67,7 +67,7 @@ public class JwtAuthenticationConverter implements Converter<Jwt, AbstractAuthen
             return List.of();
         }
 
-        Map<String, Object> roles = (Map<String, Object>) jwt.getClaim(REALM_ACCESS);
+        Map<String, Object> roles = jwt.getClaim(REALM_ACCESS);
         if (roles.get(ROLES) == null) {
             return List.of();
         }

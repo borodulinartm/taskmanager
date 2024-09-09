@@ -29,3 +29,13 @@ server:
 jwt:
   client_id: task_manager
   username: preferred_username
+
+app:
+  keycloak:
+    server-url: http://localhost:8080/
+    realm: taskmanager
+    client:
+      client-id: task_manager
+      client-secret: K27DcrOoAN1QL6zspZop66M3drEomIHq
+    username: admin
+    password: admin

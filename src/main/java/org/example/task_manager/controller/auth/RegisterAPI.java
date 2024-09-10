@@ -11,14 +11,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.security.Principal;
+
 @RestController
-@RequestMapping("/api/v1/auth/register")
+@RequestMapping("/api/v1/auth")
 @Consumes(MediaType.APPLICATION_JSON_VALUE)
 @RequiredArgsConstructor
 public class RegisterAPI {
     private final KeyCloakService keyCloakService;
 
-    @PostMapping
+    @PostMapping("/register")
     public void registerUser(@RequestBody @NonNull Authorization authorization) {
         keyCloakService.createUser(authorization);
     }

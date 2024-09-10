@@ -5,4 +5,6 @@ import org.example.task_manager.models.body.Authorization;
 public interface KeyCloakService {
     // Создаёт пользователя. Если были ошибки, то высрет ошибку
     void createUser(Authorization authorization);
+    // Сброс пароля
+    boolean resetPassword(String userID, String password);
 }

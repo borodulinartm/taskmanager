@@ -1,6 +1,7 @@
 package org.example.task_manager.controller;
 
 import jakarta.validation.Valid;
+import org.example.task_manager.annotations.Log;
 import org.example.task_manager.dto.BookDTO;
 import org.example.task_manager.dto.TaskDTO;
 import org.example.task_manager.exceptions.BookNotFoundException;
@@ -27,6 +28,7 @@ public class BookAPI {
 
     // Get all books
     @GetMapping
+    @Log
     public ResponseEntity<Iterable<BookDTO>> getListBooks() {
         Iterable<BookDTO> allBooks = bookService.allBooks();
         if (allBooks.iterator().hasNext()) {

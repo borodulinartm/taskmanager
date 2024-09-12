@@ -74,12 +74,7 @@ public class KeyCloakServiceImpl implements KeyCloakService {
             UserRepresentation toUserRepresentation = usersResources.search(userID).get(0);
             UserResource curUserResource = usersResources.get(toUserRepresentation.getId());
 
-            CredentialRepresentation credentialRepresentation = new CredentialRepresentation();
-            credentialRepresentation.setType(CredentialRepresentation.PASSWORD);
-            credentialRepresentation.setValue(password);
-            credentialRepresentation.setTemporary(false);
-
-            curUserResource.resetPassword(credentialRepresentation);
+            curUserResource.resetPassword(createCredentials(password));
         } catch (Exception exception) {
             System.out.println(exception.getMessage());
             return false;

@@ -8,6 +8,8 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class Authorization {
+    private String firstname;
+    private String lastname;
     private String username;
     private String email;
     private String password;

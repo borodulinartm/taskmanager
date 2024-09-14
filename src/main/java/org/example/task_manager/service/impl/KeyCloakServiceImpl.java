@@ -32,18 +32,26 @@ public class KeyCloakServiceImpl implements KeyCloakService {
 
         CredentialRepresentation credential = createCredentials(authorization.getPassword());
 
-        UserRepresentation userRepresentation = new UserRepresentation();
-        userRepresentation.setUsername(authorization.getUsername());
-        userRepresentation.setEmail(authorization.getEmail());
-        userRepresentation.setEnabled(true);
-        userRepresentation.setEmailVerified(true);
-        userRepresentation.setCredentials(Collections.singletonList(credential));
+        UserRepresentation userRepresentation = getUserRepresentation(authorization, credential);
 
         UsersResource userResource = keycloak.realm(realm).users();
 
         try (Response response = userResource.create(userRepresentation)) {
             addRealmToRole(username, authorization.getRole());
         }
+    }
+
+    // Метод конструирует
+    private UserRepresentation getUserRepresentation(Authorization authorization, CredentialRepresentation credential) {
+        UserRepresentation userRepresentation = new UserRepresentation();
+        userRepresentation.setFirstName(authorization.getFirstname());
+        userRepresentation.setLastName(authorization.getLastname());
+        userRepresentation.setUsername(authorization.getUsername());
+        userRepresentation.setEmail(authorization.getEmail());
+        userRepresentation.setEnabled(true);
+        userRepresentation.setEmailVerified(true);
+        userRepresentation.setCredentials(Collections.singletonList(credential));
+        return userRepresentation;
     }
 
     private void addRealmToRole(String username, String roleName) {
